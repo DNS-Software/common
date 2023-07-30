@@ -1,4 +1,4 @@
-# common-extensions
+# common
 
 ![Nuget](https://img.shields.io/nuget/v/DNS.Common)
 
