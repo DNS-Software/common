@@ -1,5 +1,5 @@
 # common-extensions
 
-![Nuget](https://img.shields.io/nuget/v/DNS.CommonExtensions)
+![Nuget](https://img.shields.io/nuget/v/DNS.Common)
 
-This class library holds some extensions commonly used in various projects build with `ASP.NET`.
+This class library holds some commonly used components in various projects build with `.NET`.

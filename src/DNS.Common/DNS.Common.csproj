@@ -3,12 +3,12 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Company>DNS Software</Company>
-    <Authors>DNS Software</Authors>
+    <Authors>Dane Naebers</Authors>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <PackageProjectUrl>https://github.com/DNS-Software/common-extensions</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/DNS-Software/common-extensions</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/DNS-Software/common</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/DNS-Software/common</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <Description>A collection of common extensions.</Description>
+    <Description>A collection of common components</Description>
     <Copyright />
   </PropertyGroup>
 
@@ -18,5 +18,8 @@
       <PackagePath></PackagePath>
     </None>
   </ItemGroup>
+
+
+
 
 </Project>

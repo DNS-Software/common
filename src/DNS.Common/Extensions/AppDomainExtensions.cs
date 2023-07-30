@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace DNS.CommonExtensions
+namespace DNS.Common.Extensions
 {
     /// <summary>
     /// <see cref="AppDomain"/> extensions

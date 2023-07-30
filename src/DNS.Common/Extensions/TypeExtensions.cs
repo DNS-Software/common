@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DNS.CommonExtensions
+namespace DNS.Common.Extensions
 {
     /// <summary>
     /// <see cref="Type"/> extensions
