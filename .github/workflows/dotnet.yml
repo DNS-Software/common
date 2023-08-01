@@ -26,10 +26,6 @@ jobs:
       uses: WyriHaximus/github-action-get-previous-tag@v1
       with:
           fallback: 1.0.0
-    - name: temp test step
-      run: echo "$version and ${version}"
-      env:
-        version: ${{ steps.tag.outputs.tag }}
     - name: Restore dependencies
       run: dotnet restore src/DNS.Common.sln
     - name: Build
