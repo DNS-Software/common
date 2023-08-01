@@ -37,7 +37,4 @@ jobs:
       env:
         version: ${{ steps.tag.outputs.tag }}
     - name: Push
-      run: dotnet nuget push --source ./DNS.Common.${version}.nupkg --api-key ${NUGET_KEY}
-      env:
-        version: ${{ steps.tag.outputs.tag }}
-        NUGET_KEY: ${{ secrets.NUGET_KEY }}
+      run: dotnet nuget push "*.nupkg" -k ${{ secrets.NUGET_KEY }} -s https://api.nuget.org/v3/index.json
