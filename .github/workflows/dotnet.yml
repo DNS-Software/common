@@ -22,9 +22,14 @@ jobs:
       with:
         dotnet-version: 7.0.x
     - name: Get Latest Tag
+      id: tag
       uses: WyriHaximus/github-action-get-previous-tag@v1
       with:
           fallback: 1.0.0
+    - name: temp test step
+      run: echo "$version and ${version}"
+      env:
+        version: ${{ steps.tag.outputs.tag }}
     - name: Restore dependencies
       run: dotnet restore src/DNS.Common.sln
     - name: Build
@@ -32,11 +37,11 @@ jobs:
     - name: Test
       run: dotnet test src/DNS.Common.sln --no-build --verbosity normal
     - name: Pack
-      run: dotnet pack src/DNS.Common/DNS.Common.csproj --configuration Release /p:Version=${version} --no-build --output .
+      run: dotnet pack src/DNS.Common/DNS.Common.csproj --configuration Release /p:Version=$version --no-build --output .
       env:
-        version: ${{ steps.previoustag.outputs.tag }}
+        version: ${{ steps.tag.outputs.tag }}
     - name: Push
       run: dotnet nuget push DNS.Common.${version}.nupkg --api-key ${NUGET_KEY}
       env:
-        version: ${{ steps.previoustag.outputs.tag }}
+        version: ${{ steps.tag.outputs.tag }}
         NUGET_KEY: ${{ secrets.NUGET_KEY }}
