@@ -4,6 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <Company>DNS Software</Company>
     <Authors>Dane Naebers</Authors>
+    <PackageId>DNS.Common</PackageId>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageProjectUrl>https://github.com/DNS-Software/common</PackageProjectUrl>
     <RepositoryUrl>https://github.com/DNS-Software/common</RepositoryUrl>
