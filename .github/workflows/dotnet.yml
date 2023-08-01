@@ -23,8 +23,6 @@ jobs:
       uses: WyriHaximus/github-action-get-previous-tag@v1
       with:
           fallback: 1.0.0
-    - name: Set VERSION variable
-      run: echo "VERSION=${{ steps.previoustag.outputs.tag }}" >> $GITHUB_ENV
     - name: Restore dependencies
       run: dotnet restore src/DNS.Common.sln
     - name: Build
@@ -32,8 +30,8 @@ jobs:
     - name: Test
       run: dotnet test src/DNS.Common.sln --no-build --verbosity normal
     - name: Pack
-      run: dotnet pack src/DNS.Common/DNS.Common.csproj --configuration Release /p:Version=${VERSION} --no-build --output .
+      run: dotnet pack src/DNS.Common/DNS.Common.csproj --configuration Release /p:Version=${{ steps.previoustag.outputs.tag }} --no-build --output .
     - name: Push
-      run: dotnet nuget push DNS.Common.${VERSION}.nupkg --api-key ${NUGET_KEY}
+      run: dotnet nuget push DNS.Common.${{ steps.previoustag.outputs.tag }}.nupkg --api-key ${NUGET_KEY}
       env:
         NUGET_KEY: ${{ secrets.NUGET_KEY }}
