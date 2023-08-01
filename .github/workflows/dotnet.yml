@@ -19,8 +19,12 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 7.0.x
-    - name: Set VERSION variable from tag
-      run: echo "VERSION=${GITHUB_REF/refs\/tags\/v/}" >> $GITHUB_ENV
+    - name: Get Latest Tag
+      uses: WyriHaximus/github-action-get-previous-tag@v1
+      with:
+          fallback: 1.0.0
+    - name: Set VERSION variable
+      run: echo "VERSION=${{ steps.previoustag.outputs.tag }}" >> $GITHUB_ENV
     - name: Restore dependencies
       run: dotnet restore src/DNS.Common.sln
     - name: Build
