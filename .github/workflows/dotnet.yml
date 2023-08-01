@@ -32,12 +32,12 @@ jobs:
     - name: Test
       run: dotnet test src/DNS.Common.sln --no-build --verbosity normal
     - name: Pack
-      with:
-        version: ${{ steps.previoustag.outputs.tag }}
       run: dotnet pack src/DNS.Common/DNS.Common.csproj --configuration Release /p:Version=${version} --no-build --output .
-    - name: Push
       with:
         version: ${{ steps.previoustag.outputs.tag }}
+    - name: Push
       run: dotnet nuget push DNS.Common.${version}.nupkg --api-key ${NUGET_KEY}
+      with:
+        version: ${{ steps.previoustag.outputs.tag }}
       secrets:
         NUGET_KEY: ${{ secrets.NUGET_KEY }}
