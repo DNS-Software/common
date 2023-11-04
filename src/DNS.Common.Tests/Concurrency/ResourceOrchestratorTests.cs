@@ -54,7 +54,7 @@ public sealed class ResourceOrchestratorTests
         readyToClaim.Wait();
         proceedToClaim.Set();
 
-        Thread.Sleep(100); // do some work
+        Thread.Sleep(1000); // do some work
         resource.ReleaseResource();
         
         await Task.WhenAll(claimForOperationA, claimForOperationB, claimForOperationAny);

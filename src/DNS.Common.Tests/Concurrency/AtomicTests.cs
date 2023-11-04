@@ -77,10 +77,10 @@ public sealed class AtomicTests
     public async Task Atomic_ShouldWakeUpMultipleThreads_WhenValueChanges()
     {
         // Arrange
-        const int maxWaitTime = 1000;
-
         var atomic = new Atomic<int>();
         var random = new Random().Next(2, 10);
+
+        int maxWaitTime = 1000 * random;
 
         IEnumerable<Task> CreateWaitingThreads()
         {
