@@ -12,7 +12,6 @@ namespace DNS.Common.Concurrency
     {
         private bool _disposed;
 
-        private readonly AutoResetEvent _checkPriorityQueue;
         private readonly PriorityQueue<TResourceConsumers, int> _priorityQueue;
         private readonly ExclusiveSession _exclusiveSession;
 
@@ -20,12 +19,8 @@ namespace DNS.Common.Concurrency
 
         protected ResourceOrchestrator()
         {
-            _checkPriorityQueue = new AutoResetEvent(false);
             _priorityQueue = new PriorityQueue<TResourceConsumers, int>(PrioritisedConsumers);
             _exclusiveSession = new ExclusiveSession();
-
-            _exclusiveSession.SessionEnded += CheckPriorityQueue;
-            _priorityQueue.ValueEnqueued += CheckPriorityQueue;
 
             var awaitOrchastratorRunning = new AutoResetEvent(false);
 
@@ -35,14 +30,9 @@ namespace DNS.Common.Concurrency
                 
                 while (!_disposed)
                 {
-                    _checkPriorityQueue.WaitOne();
+                    _exclusiveSession.AwaitSessionEnd();
 
                     if (_priorityQueue.IsEmpty)
-                    {
-                        continue;
-                    }
-                    
-                    if (_exclusiveSession.HasSession)
                     {
                         continue;
                     }
@@ -87,16 +77,10 @@ namespace DNS.Common.Concurrency
 
             if (disposing)
             {
-                _priorityQueue.ValueEnqueued -= CheckPriorityQueue;
-                _exclusiveSession.SessionEnded -= CheckPriorityQueue;
-                
-                _checkPriorityQueue?.Dispose();
                 _exclusiveSession?.Dispose();
             }
 
             _disposed = true;
         }
-
-        private void CheckPriorityQueue() => _checkPriorityQueue.Set();
     }
 }

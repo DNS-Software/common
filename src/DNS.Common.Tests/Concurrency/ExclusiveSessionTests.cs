@@ -38,8 +38,12 @@ public sealed class ExclusiveSessionTests : IDisposable
         _exclusiveSession.BeginSession();
         
         // Act
-        timer.Start();
-        var beginSecondSessionTask = Task.Run(() => _exclusiveSession.BeginSession());
+        var beginSecondSessionTask = Task.Run(() => 
+        {
+            timer.Start();
+            _exclusiveSession.BeginSession();
+        });
+        
         beginSecondSessionTask.Wait(maxTimeToAwait);
         timer.Stop();
 

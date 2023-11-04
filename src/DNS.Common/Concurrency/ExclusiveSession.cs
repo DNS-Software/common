@@ -1,6 +1,5 @@
 using System;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace DNS.Common.Concurrency
 {
@@ -12,7 +11,6 @@ namespace DNS.Common.Concurrency
         private readonly Atomic<int> _sessionId = new Atomic<int>(NoSession);
 
         public bool HasSession => _sessionId.Value != NoSession;
-        public event Action SessionEnded;
         
         public void BeginSession(int? sessionOwner = null)
         {
@@ -38,7 +36,6 @@ namespace DNS.Common.Concurrency
             }
             
             _sessionId.Value = NoSession;
-            Task.Run(() => SessionEnded?.Invoke());
         }
         
         public void AwaitSessionStarted(int owner) => _sessionId.WaitForValue(owner);

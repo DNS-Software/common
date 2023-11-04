@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace DNS.Common.Concurrency
 {
@@ -27,8 +26,6 @@ namespace DNS.Common.Concurrency
             }
         }
 
-        public event Action ValueEnqueued;
-
         public PriorityQueue()
         {
             _collection = new List<Element<TValue>>();
@@ -51,8 +48,6 @@ namespace DNS.Common.Concurrency
                     _collection.Sort();
                 }
             }
-
-            Task.Run(() => ValueEnqueued?.Invoke());
             
             int GetPriority()
             {

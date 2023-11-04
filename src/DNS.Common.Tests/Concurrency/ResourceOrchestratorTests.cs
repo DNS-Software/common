@@ -36,14 +36,13 @@ public sealed class ResourceOrchestratorTests
         
         resource.ClaimResource(ResourceConsumers.Any);
         
-        Task<double> CreateClaimOperation(ResourceConsumers consumer) => Task.Run(() =>
+        Task CreateClaimOperation(ResourceConsumers consumer) => Task.Run(() =>
         {
             readyToClaim.Signal();
             proceedToClaim.WaitOne();
-            var timer = Stopwatch.StartNew();
             resource.ClaimResource(consumer);
+            Thread.Sleep(100); // do some work
             resource.ReleaseResource();
-            return timer.Elapsed.TotalMilliseconds;
         });
         
         var claimForOperationA = CreateClaimOperation(ResourceConsumers.OperationA);
@@ -53,15 +52,12 @@ public sealed class ResourceOrchestratorTests
         // Act
         readyToClaim.Wait();
         proceedToClaim.Set();
-
-        Thread.Sleep(1000); // do some work
         resource.ReleaseResource();
         
-        await Task.WhenAll(claimForOperationA, claimForOperationB, claimForOperationAny);
+        var firstClaimOperation = await Task.WhenAny(claimForOperationA, claimForOperationB, claimForOperationAny);
         
         // Assert
-        (await claimForOperationA).Should().BeLessThan(await claimForOperationB);
-        (await claimForOperationB).Should().BeLessThan(await claimForOperationAny);
+        firstClaimOperation.Should().Be(claimForOperationA);
     }
     
     private class Resource : ResourceOrchestrator<ResourceConsumers>

@@ -62,32 +62,6 @@ public sealed class PriorityQueueTests
         act.Should().Throw<InvalidOperationException>();
     }
     
-    [Fact]
-    public void ValueEnqueuedEvent_ShouldBeNonBlocking_WhenInvoked()
-    {
-        // Arrange
-        var queue = new DCC.PriorityQueue<int, int>();
-        var valueQueueInvoked = false;
-        var awaitMainThread = new AutoResetEvent(false);
-        var awaitValueEnQueuedInvoked = new AutoResetEvent(false);
-        
-        queue.ValueEnqueued += () =>
-        {
-            awaitMainThread.WaitOne();
-            valueQueueInvoked = true;
-            awaitValueEnQueuedInvoked.Set();
-        };
-        
-        // Act
-        queue.Enqueue(1, 1);
-        
-        // Assert
-        valueQueueInvoked.Should().BeFalse();
-        awaitMainThread.Set();
-        awaitValueEnQueuedInvoked.WaitOne();
-        valueQueueInvoked.Should().BeTrue();
-    }
-    
     private enum PriotriyKey
     {
         A,
