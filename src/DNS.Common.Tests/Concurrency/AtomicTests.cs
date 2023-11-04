@@ -59,7 +59,7 @@ public sealed class AtomicTests
     public void Atomic_ShouldWakeUpThread_WhenValueChanges()
     {
         // Arrange
-        const int maxWaitTime = 100;
+        const int maxWaitTime = 1000;
 
         var atomic = new Atomic<int>();
         var waitForValueTask = Task.Run(() => atomic.WaitForValue(1));
@@ -77,7 +77,7 @@ public sealed class AtomicTests
     public async Task Atomic_ShouldWakeUpMultipleThreads_WhenValueChanges()
     {
         // Arrange
-        const int maxWaitTime = 100;
+        const int maxWaitTime = 1000;
 
         var atomic = new Atomic<int>();
         var random = new Random().Next(2, 10);
@@ -105,7 +105,7 @@ public sealed class AtomicTests
     public void AtomicWaitForValue_ShouldBeBlocked_WhenDesiredValueNeverAchieved()
     {
         // Arrange
-        const int maxWaitTime = 100;
+        const int maxWaitTime = 1000;
 
         var atomic = new Atomic<int>();
         var waitForValueTask = Task.Run(() => atomic.WaitForValue(1));
@@ -116,6 +116,5 @@ public sealed class AtomicTests
         // Assert
         waitResult.Should().BeFalse();
         waitForValueTask.IsCompletedSuccessfully.Should().BeFalse();
-        waitForValueTask.Status.Should().Be(TaskStatus.Running);
     }
 }

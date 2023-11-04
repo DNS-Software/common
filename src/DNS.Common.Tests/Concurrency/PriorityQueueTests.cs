@@ -68,10 +68,12 @@ public sealed class PriorityQueueTests
         // Arrange
         var queue = new DCC.PriorityQueue<int, int>();
         var valueQueueInvoked = false;
+        var awaitMainThread = new AutoResetEvent(false);
         var awaitValueEnQueuedInvoked = new AutoResetEvent(false);
         
         queue.ValueEnqueued += () =>
         {
+            awaitMainThread.WaitOne();
             valueQueueInvoked = true;
             awaitValueEnQueuedInvoked.Set();
         };
@@ -81,6 +83,7 @@ public sealed class PriorityQueueTests
         
         // Assert
         valueQueueInvoked.Should().BeFalse();
+        awaitMainThread.Set();
         awaitValueEnQueuedInvoked.WaitOne();
         valueQueueInvoked.Should().BeTrue();
     }
