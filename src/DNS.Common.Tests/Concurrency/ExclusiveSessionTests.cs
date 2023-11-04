@@ -39,7 +39,7 @@ public sealed class ExclusiveSessionTests : IDisposable
         
         // Act
         timer.Start();
-        var beginSecondSessionTask = Task.Run(_exclusiveSession.BeginSession);
+        var beginSecondSessionTask = Task.Run(() => _exclusiveSession.BeginSession());
         beginSecondSessionTask.Wait(maxTimeToAwait);
         timer.Stop();
 
@@ -75,7 +75,7 @@ public sealed class ExclusiveSessionTests : IDisposable
     public void EndExclusiveSession_ShouldThrow_WhenCurrentThreadIsNotTheSessionOwner()
     {
         // Arrange
-        Task.Run(_exclusiveSession.BeginSession).Wait();
+        Task.Run(() => _exclusiveSession.BeginSession()).Wait();
         
         // Act
         Action act = () => _exclusiveSession.EndSession();
@@ -105,25 +105,5 @@ public sealed class ExclusiveSessionTests : IDisposable
         timer.Stop();
         
         timer.Elapsed.TotalMilliseconds.Should().BeGreaterOrEqualTo(20);
-    }
-    
-    [Fact]
-    public void CheckClaimOrAwaitSessionEnd_ShouldBeReleased_WhenActiveSessionEnds()
-    {
-        // Arrange
-        Task.Run(() =>
-        {
-            _exclusiveSession.BeginSession();
-            Thread.Sleep(100);
-            _exclusiveSession.EndSession();
-        });
-        
-        Thread.Sleep(10);
-        
-        var timer = Stopwatch.StartNew();
-        _exclusiveSession.CheckClaimOrAwaitSessionEnd();
-        timer.Stop();
-        
-        timer.Elapsed.TotalMilliseconds.Should().BeGreaterOrEqualTo(50);
     }
 }

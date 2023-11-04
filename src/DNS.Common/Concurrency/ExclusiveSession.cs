@@ -1,5 +1,6 @@
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace DNS.Common.Concurrency
 {
@@ -7,16 +8,19 @@ namespace DNS.Common.Concurrency
     {
         private const int NoSession = -1;
         
-        private readonly Semaphore _beginSessionGuard = new Semaphore(1, 1);
-        private readonly Atomic<int> _sessionId = new Atomic<int>(NoSession);        
+        private readonly SemaphoreSlim _beginSessionGuard = new SemaphoreSlim(1, 1);
+        private readonly Atomic<int> _sessionId = new Atomic<int>(NoSession);
+
+        public bool HasSession => _sessionId.Value != NoSession;
+        public event Action SessionEnded;
         
-        public void BeginSession()
+        public void BeginSession(int? sessionOwner = null)
         {
             // Make sure only one session is started at a time
-            _beginSessionGuard.WaitOne();
+            _beginSessionGuard.Wait();
             
             CheckClaimOrAwaitSessionEnd();
-            _sessionId.Value = Thread.CurrentThread.ManagedThreadId;
+            _sessionId.Value = sessionOwner ?? Thread.CurrentThread.ManagedThreadId;
             
             _beginSessionGuard.Release();
         }
@@ -30,13 +34,17 @@ namespace DNS.Common.Concurrency
             
             if (_sessionId.Value != Thread.CurrentThread.ManagedThreadId)
             {
-                throw new InvalidOperationException("Current thread is not owner of the session, session is ended without ever starting");
+                throw new InvalidOperationException("Current thread is not owner of the session!");
             }
             
             _sessionId.Value = NoSession;
+            Task.Run(() => SessionEnded?.Invoke());
         }
         
-        public void CheckClaimOrAwaitSessionEnd()
+        public void AwaitSessionStarted(int owner) => _sessionId.WaitForValue(owner);
+        public void AwaitSessionEnd() => _sessionId.WaitForValue(NoSession);
+
+        private void CheckClaimOrAwaitSessionEnd()
         {
             if (_sessionId.Value == NoSession)
             {
@@ -54,6 +62,7 @@ namespace DNS.Common.Concurrency
         public void Dispose()
         {
             _beginSessionGuard?.Dispose();
+            _sessionId?.Dispose();
         }
     }
 }

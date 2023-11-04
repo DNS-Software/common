@@ -4,10 +4,13 @@ using System.Threading;
 
 namespace DNS.Common.Concurrency
 {
-    public sealed class Atomic<T>
+    /// <summary>
+    /// Thread safe value wrapper
+    /// </summary>
+    public sealed class Atomic<T> : IDisposable
     {
         private readonly object _valueLock = new object();
-        private readonly AutoResetEvent _valueChangedEvent = new AutoResetEvent(false);
+        private readonly ManualResetEvent _valueChangedEvent = new ManualResetEvent(false);
         
         private T _value;
         public T Value
@@ -54,6 +57,11 @@ namespace DNS.Common.Concurrency
             {
                 _valueChangedEvent.WaitOne();
             }
+        }
+
+        public void Dispose()
+        {
+            _valueChangedEvent?.Dispose();
         }
     }
 }
