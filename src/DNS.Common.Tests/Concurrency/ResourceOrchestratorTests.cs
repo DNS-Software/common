@@ -52,6 +52,9 @@ public sealed class ResourceOrchestratorTests
         // Act
         readyToClaim.Wait();
         proceedToClaim.Set();
+
+        Thread.Sleep(1000); // await sort on slow build servers
+
         resource.ReleaseResource();
         
         var firstClaimOperation = await Task.WhenAny(claimForOperationA, claimForOperationB, claimForOperationAny);

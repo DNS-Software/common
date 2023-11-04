@@ -34,16 +34,19 @@ public sealed class ExclusiveSessionTests : IDisposable
         // Arrange
         const int maxTimeToAwait = 100;
         var timer = new Stopwatch();
+        var threadStarted = new AutoResetEvent(false);
         
         _exclusiveSession.BeginSession();
         
         // Act
         var beginSecondSessionTask = Task.Run(() => 
         {
+            threadStarted.Set();
             timer.Start();
             _exclusiveSession.BeginSession();
         });
-        
+
+        threadStarted.WaitOne();
         beginSecondSessionTask.Wait(maxTimeToAwait);
         timer.Stop();
 
